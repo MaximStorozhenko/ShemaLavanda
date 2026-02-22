@@ -1,0 +1,49 @@
+﻿<Window x:Class="ShemaLavanda.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
+        xmlns:local="clr-namespace:ShemaLavanda"
+        mc:Ignorable="d"
+        WindowStyle="None" ResizeMode="NoResize" WindowState="Maximized"
+        Title="MainWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Оборудование" Grid.Column="0" Width="100" Height="30" Margin="10 0" Command="{Binding OpenEquipmentListWindowCommand}"/>
+            <Button Content="Выход" Grid.Column="2" Width="100" Height="30" Margin="10 0" Command="{Binding ExitProgramCommand}"/>
+        </Grid>
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="DarkGray" Margin="0 2" VerticalAlignment="Top">
+            <Border BorderThickness="2" BorderBrush="DimGray">
+                <TextBlock x:Name="DateBox" VerticalAlignment="Center" Margin="5"
+                           FontSize="12" FontWeight="Bold" Foreground="Black" Text="01.01.2025"/>
+            </Border>
+            <Border BorderThickness="2" BorderBrush="DimGray">
+                <TextBlock x:Name="TimeBox" VerticalAlignment="Center" Margin="5"
+                           FontSize="12" FontWeight="Bold" Foreground="Black" Text="00:00:00"/>
+            </Border>
+        </StackPanel>
+        
+        <svg:SvgViewbox x:Name="svgCanvas" Stretch="Uniform" Grid.Row="1"
+                        Source="Assets/My_shema.svg"
+                        Loaded="svgCanvas_Loaded"
+                        MouseDown="svgCanvas_MouseLeftButtonDown"/>
+        <!--<svg:SvgCanvas x:Name="svgCanvas" 
+                       Source="Assets/My_shema.svg"
+                       Loaded="svgCanvas_Loaded"
+                       MouseLeftButtonDown="svgCanvas_MouseLeftButtonDown"/>-->
+    </Grid>
+</Window>
