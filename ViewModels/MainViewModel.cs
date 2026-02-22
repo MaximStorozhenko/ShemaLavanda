@@ -13,8 +13,8 @@ namespace ShemaLavanda.ViewModels
 {
     internal class MainViewModel : ViewModelBase
     {
-        private bool selectionRoute = false;
         public SvgSchemeService SvgSchemeService { get; }
+
         public RelayCommand ExitProgramCommand => new RelayCommand(() => Application.Current.Shutdown());
         public RelayCommand OpenEquipmentListWindowCommand => new RelayCommand(() =>
         {
@@ -36,52 +36,52 @@ namespace ShemaLavanda.ViewModels
             set => Set(ref selectedEquipmentId, value);
         }
 
-        public MainViewModel()
+        public MainViewModel(SvgSchemeService service)
         {
-            SvgSchemeService = new SvgSchemeService();
+            SvgSchemeService = service;
         }
 
-        public void OnSvgLoaded(Drawing drawing)
-        {
-            SvgSchemeService.Parse(drawing);
-        }
+        //public void OnSvgLoaded(Drawing drawing)
+        //{
+        //    SvgSchemeService.Parse(drawing);
+        //}
 
-        public void OnMouseDown(SharpVectors.Converters.SvgViewbox svgView, Point point)
-        {
-            //HitTestResult hit = VisualTreeHelper.HitTest(svgView, point);
-            //if (hit == null)
-            //    return;
+        //public void OnMouseDown(SharpVectors.Converters.SvgViewbox svgView, Point point)
+        //{
+        //    //HitTestResult hit = VisualTreeHelper.HitTest(svgView, point);
+        //    //if (hit == null)
+        //    //    return;
 
-            //if (hit.VisualHit is DrawingVisual dv)
-            //{
-            //    DrawingGroup drawing = dv.Drawing;
-            //    //HandleDrawingClick(drawing);
-            //}
+        //    //if (hit.VisualHit is DrawingVisual dv)
+        //    //{
+        //    //    DrawingGroup drawing = dv.Drawing;
+        //    //    //HandleDrawingClick(drawing);
+        //    //}
 
 
-            //if (!selectionRoute)
-            //{
-            //    if (!highlight)
-            //    {
-            //        svgSchemeService.Highlight("BE_3.3", Brushes.Yellow);
-            //        highlight = true;
-            //    }
-            //    else
-            //    {
-            //        svgSchemeService.Highlight("BE_3.3", Brushes.Gray);
-            //        highlight = false;
-            //    }
-            //    //svgSchemeService.Highlight("BE_3.3", Brushes.Orange);
+        //    //if (!selectionRoute)
+        //    //{
+        //    //    if (!highlight)
+        //    //    {
+        //    //        svgSchemeService.Highlight("BE_3.3", Brushes.Yellow);
+        //    //        highlight = true;
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        svgSchemeService.Highlight("BE_3.3", Brushes.Gray);
+        //    //        highlight = false;
+        //    //    }
+        //    //    //svgSchemeService.Highlight("BE_3.3", Brushes.Orange);
 
-            //    //EquipmentWindow equipmentWindow = new EquipmentWindow();
-            //    //equipmentWindow.Owner = Application.Current.MainWindow;
-            //    //equipmentWindow.Show();
-            //}
+        //    //    //EquipmentWindow equipmentWindow = new EquipmentWindow();
+        //    //    //equipmentWindow.Owner = Application.Current.MainWindow;
+        //    //    //equipmentWindow.Show();
+        //    //}
 
-            ////string id = svgSchemeService.HitTest(point);
-            ////if (id == null) return;
+        //    ////string id = svgSchemeService.HitTest(point);
+        //    ////if (id == null) return;
 
-            ////SelectEquipment(id);
-        }
+        //    ////SelectEquipment(id);
+        //}
     }
 }

@@ -1,22 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows;
+using System.Windows.Media;
 
 namespace ShemaLavanda.Models
 {
     public class EquipmentItem
     {
-        public string Id { get; }
-        public string Type { get; }
-        public string Name { get; }
+        public string Id { get; set; }
+        public string Type { get; set; }
+        public string Name { get; set; }
 
-        public EquipmentItem(string id, string type)
+        public List<GeometryDrawing> GeometryDrawings { get; } = new();
+        public List<Rect> Rects { get; } = new();
+        public void AddBounds(Rect bounds)
         {
-            Id = id;
-            Type = type;//id.Split('_')[0]; // CV, NR, SL...
-            Name = id.Replace('_', ' ');
+            Rects.Add(bounds);
+        }
+
+        public void AddGeometry(GeometryDrawing drawing)
+        {
+            GeometryDrawings.Add(drawing);
+        }
+
+        public override string ToString()
+        {
+            return $"Equipment - {Id} _ {Type} _ {Name} _ (geometryDrawings: {GeometryDrawings.Count} _ {GeometryDrawings.ToString()}) _ (rects: {Rects.Count} _ {Rects.ToString()})";
         }
     }
 }

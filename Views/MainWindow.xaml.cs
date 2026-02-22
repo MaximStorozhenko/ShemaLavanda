@@ -1,6 +1,4 @@
-﻿using SharpVectors.Converters;
-using SharpVectors.Dom.Svg;
-using SharpVectors.Runtime;
+﻿using ShemaLavanda.Services;
 using ShemaLavanda.ViewModels;
 using System.Diagnostics;
 using System.Windows;
@@ -12,131 +10,141 @@ namespace ShemaLavanda
 {
     public partial class MainWindow : Window
     {
-        private readonly string nameShema = "My_shema.svg";
-
-        private string selectedEquipment;
-        MainViewModel vm = new();
+        private MainViewModel vm => (MainViewModel)DataContext;
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = vm;
+
+            SvgSchemeService service = new SvgSchemeService();
+            DataContext = new MainViewModel(service);
         }
 
-        private void SvgView_Loaded(object sender, RoutedEventArgs e)
-        {
-            SvgViewbox svgView = (SvgViewbox)sender;
+        //public void Highlight(string equipmentId)
+        //{
+        //    MessageBox.Show($"Highlighting equipment: {equipmentId}");
+        //    ResetHighlight();
 
-            if (svgView.Drawings is DrawingGroup drawing)
-            {
-                ((MainViewModel)DataContext).OnSvgLoaded(drawing);
-            }
-        }
+        //    if (!vm.SvgSchemeService.Elements.TryGetValue(equipmentId, out List<GeometryDrawing> list))
+        //        return;
 
-        public void Highlight(string equipmentId)
-        {
-            MessageBox.Show($"Highlighting equipment: {equipmentId}");
-            ResetHighlight();
+        //    foreach (GeometryDrawing geo in list)
+        //        geo.Brush = Brushes.YellowGreen;
+        //}
 
-            if (!vm.SvgSchemeService.Elements.TryGetValue(equipmentId, out List<GeometryDrawing> list))
-                return;
+        //private void ResetHighlight()
+        //{
+        //    foreach (var list in vm.SvgSchemeService.Elements.Values)
+        //        foreach (var geo in list)
+        //            geo.Brush = Brushes.Gray;
+        //}
 
-            foreach (GeometryDrawing geo in list)
-                geo.Brush = Brushes.YellowGreen;
-        }
-
-        private void ResetHighlight()
-        {
-            foreach (var list in vm.SvgSchemeService.Elements.Values)
-                foreach (var geo in list)
-                    geo.Brush = Brushes.Gray;
-        }
-
-        private Dictionary<string, Rect> elementBounds = new Dictionary<string, Rect>();
+        //private Dictionary<string, Rect> elementBounds = new Dictionary<string, Rect>();
 
         private void svgCanvas_Loaded(object sender, RoutedEventArgs e)
         {
+            //if (svgCanvas.Drawings != null)
+            //{
+            //    vm.SvgSchemeService.Parse(svgCanvas.Drawings);
+            //}
             //ParseSvgFile();
+
+            if (svgCanvas.Drawings != null)
+                vm.SvgSchemeService.Parse(svgCanvas.Drawings, "Assets/My_shema.svg");
         }
 
         private void svgCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Point clickPoint = e.GetPosition(svgCanvas);
-            Debug.WriteLine($"\nClick at: X={clickPoint.X}, Y={clickPoint.Y}");
+            //Point clickPoint = e.GetPosition(svgCanvas);
+            //Debug.WriteLine($"\nClick at: X={clickPoint.X}, Y={clickPoint.Y}");
 
-            foreach (var element in elementBounds.Reverse())
-            {
-                if (element.Value.Contains(clickPoint))
-                {
-                    Debug.WriteLine($"Hit: {element.Key}");
-                    MessageBox.Show($"Clicked ID: {element.Key}");
-                    return;
-                }
-            }
+            //foreach (var element in elementBounds.Reverse())
+            //{
+            //    if (element.Value.Contains(clickPoint))
+            //    {
+            //        Debug.WriteLine($"Hit: {element.Key}");
+            //        MessageBox.Show($"Clicked ID: {element.Key}");
+            //        return;
+            //    }
+            //}
 
-            MessageBox.Show("Clicked outside elements");
+            //MessageBox.Show("Clicked outside elements");
+
+            //HitTestResult hit = VisualTreeHelper.HitTest(svgCanvas, e.GetPosition(svgCanvas));
+            //if (hit?.VisualHit is not DrawingVisual dv)
+            //    return;
+
+            //GeometryDrawing geo = FindGeometry(dv.Drawing);
+            //if (geo == null)
+            //    return;
+
+            //if (!vm.SvgSchemeService.HitZones.TryGetValue(geo, out string equipmentId))
+            //    return;
+
+            //vm.SelectedEquipmentId = equipmentId;
+            //MessageBox.Show($"Clicked on equipment: {equipmentId}");
+            //Highlight(equipmentId);
         }
 
-        private void ParseSvgFile()
+        private GeometryDrawing FindGeometry(Drawing drawing)
         {
-            XDocument doc = XDocument.Load($"Assets/{nameShema}");
-            XNamespace ns = "http://www.w3.org/2000/svg";
+            if (drawing is GeometryDrawing geo)
+                return geo;
 
-            foreach (var element in doc.Descendants())
+            if (drawing is DrawingGroup group)
             {
-                var id = element.Attribute("id")?.Value;
-
-                if (!string.IsNullOrEmpty(id) && id.StartsWith("BE_") && id.EndsWith("_hit"))
+                foreach (var child in group.Children)
                 {
-                    Debug.WriteLine($"Found element: {element.Name.LocalName}, ID: {id}");
-
-                    Rect? bounds = GetElementBounds(element);
-
-                    if (bounds.HasValue)
-                    {
-                        elementBounds[id] = bounds.Value;
-                        Debug.WriteLine($"  Bounds: X={bounds.Value.X}, Y={bounds.Value.Y}, W={bounds.Value.Width}, H={bounds.Value.Height}");
-                    }
+                    var found = FindGeometry(child);
+                    if (found != null)
+                        return found;
                 }
-            }
-        }
-
-        private Rect? GetElementBounds(XElement element)
-        {
-            string localName = element.Name.LocalName;
-
-            try
-            {
-                double x = ParseDouble(element.Attribute("x")?.Value);
-                double y = ParseDouble(element.Attribute("y")?.Value);
-                double width = ParseDouble(element.Attribute("width")?.Value);
-                double height = ParseDouble(element.Attribute("height")?.Value);
-
-                if (width > 0 && height > 0)
-                    return new Rect(x, y, width, height);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error parsing bounds: {ex.Message}");
             }
 
             return null;
         }
+        //private void Highlight(string equipmentId)
+        //{
+        //    ResetHighlight();
 
-        private double ParseDouble(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-                return 0;
+        //    if (!vm.SvgSchemeService.Visuals.TryGetValue(equipmentId, out var list))
+        //        return;
 
-            // Убираем единицы измерения (px, pt и т.д.)
-            value = new string(value.TakeWhile(c => char.IsDigit(c) || c == '.' || c == '-').ToArray());
+        //    foreach (var geo in list)
+        //        geo.Brush = Brushes.LimeGreen;
+        //}
 
-            double.TryParse(value,
-                System.Globalization.NumberStyles.Any,
-                System.Globalization.CultureInfo.InvariantCulture,
-                out double result);
+        //private void ResetHighlight()
+        //{
+        //    foreach (var list in vm.SvgSchemeService.Visuals.Values)
+        //        foreach (var geo in list)
+        //            geo.Brush = Brushes.LightGray;
+        //}
 
-            return result;
-        }
+        //private void ParseSvgFile()
+        //{
+        //    XDocument doc = XDocument.Load("Assets/My_shema.svg");
+        //    XNamespace ns = "http://www.w3.org/2000/svg";
+
+        //    foreach (var element in doc.Descendants())
+        //    {
+        //        var id = element.Attribute("id")?.Value;
+
+        //        if (!string.IsNullOrEmpty(id) && id.StartsWith("BE_") && id.EndsWith("_hit"))
+        //        {
+        //            Debug.WriteLine($"Found element: {element.Name.LocalName}, ID: {id}");
+
+        //            Rect? bounds = GetElementBounds(element);
+
+        //            if (bounds.HasValue)
+        //            {
+        //                //elementBounds[id] = bounds.Value;
+        //                Debug.WriteLine($"  Bounds: X={bounds.Value.X}, Y={bounds.Value.Y}, W={bounds.Value.Width}, H={bounds.Value.Height}");
+        //            }
+        //        }
+        //    }
+        //}
+
+        
     }
 }
