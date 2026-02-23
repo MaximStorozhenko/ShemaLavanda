@@ -121,48 +121,24 @@ namespace ShemaLavanda.Services
 
         
 
-        private void ParseVisual(Drawing drawing, string currentId = null)
+        private void ParseVisual(Drawing drawing, string currentId = null, bool insideEq = false)
         {
             if (drawing is DrawingGroup group)
             {
                 string id = group.GetValue(SvgObject.IdProperty) as string;
 
                 // 1️⃣ Корень оборудования
-                if (!string.IsNullOrEmpty(id) && IsEquipmentType(id) && !id.EndsWith("_hit"))
+                if (!string.IsNullOrEmpty(id) && IsEquipmentType(id) && !id.EndsWith("_hit") && !id.StartsWith("text"))
                     currentId = id;
 
+                if (!string.IsNullOrEmpty(id) && id.StartsWith("eq_"))
+                    insideEq = true;
+
                 foreach (Drawing child in group.Children)
-                    ParseVisual(child, currentId);
+                    ParseVisual(child, currentId, insideEq);
             }
-            else if (drawing is GeometryDrawing geo && currentId != null)
+            else if (drawing is GeometryDrawing geo && currentId != null && insideEq)
             {
-                string geoId = geo.GetValue(SvgObject.IdProperty) as string;
-
-                //// 2️⃣ HIT-зона
-                //if (geoId.EndsWith("_hit"))
-                //{
-                //    hitZones[geo] = currentId;
-                //
-                //    return; // ⛔ дальше не идём
-                //}
-                //
-                // 3️⃣ Визуальная часть оборудования
-                //foreach (var item in Equipment)
-                //{
-                //    if(item.Id == currentId)
-                //    {
-                //        item.geometryDrawings.Add(geo);
-                //        break;
-                //    }
-                //    if (!item.TryGetValue(currentId, out var visualsList))
-                //    {
-                //        visualsList = new List<GeometryDrawing>();
-                //        visuals[currentId] = visualsList;
-                //    }
-                //
-                //    visualsList.Add(geo);
-                //}
-
                 if (!Items.TryGetValue(currentId, out var equipmentItem))
                 {
                     equipmentItem = new EquipmentItem();

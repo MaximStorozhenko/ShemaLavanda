@@ -29,11 +29,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="DarkGray" Margin="0 2" VerticalAlignment="Top">
             <Border BorderThickness="2" BorderBrush="DimGray">
                 <TextBlock x:Name="DateBox" VerticalAlignment="Center" Margin="5"
-                           FontSize="12" FontWeight="Bold" Foreground="Black" Text="01.01.2025"/>
-            </Border>
-            <Border BorderThickness="2" BorderBrush="DimGray">
-                <TextBlock x:Name="TimeBox" VerticalAlignment="Center" Margin="5"
-                           FontSize="12" FontWeight="Bold" Foreground="Black" Text="00:00:00"/>
+                           FontSize="12" FontWeight="Bold" Foreground="Black" Text="{Binding Date}" d:Text="01.01.2025 00:00"/>
             </Border>
         </StackPanel>
         
