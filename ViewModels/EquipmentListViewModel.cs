@@ -1,15 +1,33 @@
 ﻿using ShemaLavanda.Models;
-using System;
-using System.Collections.Generic;
+using ShemaLavanda.Services;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShemaLavanda.ViewModels
 {
-    public class EquipmentListViewModel
+    public class EquipmentListViewModel : ViewModelBase
     {
-        public ObservableCollection<EquipmentItem> Items { get; } = new();
+        private readonly EquipmentService service = new();
+
+        public ObservableCollection<EquipmentGroup> Groups { get; }
+
+        private Equipment selectedEquipment = new();
+        public Equipment SelectedEquipment
+        {
+            get => selectedEquipment;
+            set => Set(ref selectedEquipment, value);
+        }
+
+        public EquipmentListViewModel()
+        {
+            var list = service.GetAll();
+
+            Groups = new ObservableCollection<EquipmentGroup>(
+                list.GroupBy(e => e.Type)
+                    .Select(g => new EquipmentGroup
+                    {
+                        Name = g.Key,
+                        Items = new ObservableCollection<Equipment>(g)
+                    }));
+        }
     }
 }

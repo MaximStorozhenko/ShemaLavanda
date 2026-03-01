@@ -5,16 +5,59 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShemaLavanda.Views"
         mc:Ignorable="d"
-        Title="EquipmentListWindow" Height="450" Width="399">
+        Title="EquipmentListWindow" Height="450" Width="739">
     <Grid>
-        <ListView ItemsSource="{Binding Items}">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="120"/>
-                    <GridViewColumn Header="Тип" DisplayMemberBinding="{Binding Type}" Width="80"/>
-                    <GridViewColumn Header="Название" DisplayMemberBinding="{Binding Name}" Width="150"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" MinWidth="150"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ЛЕВАЯ ЧАСТЬ - ДЕРЕВО -->
+        <TreeView ItemsSource="{Binding Groups}"
+                  SelectedItemChanged="TreeView_SelectedItemChanged">
+
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Items}">
+                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+
+        </TreeView>
+
+        <!-- РАЗДЕЛИТЕЛЬ -->
+        <GridSplitter Grid.Column="1"
+                  Width="5"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  Background="LightGray"
+                  ResizeBehavior="PreviousAndNext"
+                  ResizeDirection="Columns"/>
+
+        <!-- ПРАВАЯ ЧАСТЬ - ДЕТАЛИ -->
+        <StackPanel Grid.Column="2" Margin="10">
+
+            <TextBlock Text="Код:" FontWeight="Bold"/>
+            <TextBlock Text="{Binding SelectedEquipment.Code}"/>
+
+            <TextBlock Text="Название:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding SelectedEquipment.Name}"/>
+
+            <TextBlock Text="Тип:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding SelectedEquipment.Type}"/>
+
+            <TextBlock Text="Описание:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding SelectedEquipment.Description}"/>
+
+            <TextBlock Text="РП:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding SelectedEquipment.RpNumber}"/>
+
+        </StackPanel>
+
     </Grid>
 </Window>

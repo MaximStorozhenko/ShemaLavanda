@@ -27,15 +27,10 @@ namespace ShemaLavanda.ViewModels
         public RelayCommand ExitProgramCommand => new RelayCommand(() => Application.Current.Shutdown());
         public RelayCommand OpenEquipmentListWindowCommand => new RelayCommand(() =>
         {
-            EquipmentListViewModel vm = new();
-
-            foreach (var item in SvgSchemeService.Equipment)
-                vm.Items.Add(item);
-
-            EquipmentListWindow equipmentWindow = new(vm);
-            equipmentWindow.Owner = Application.Current.MainWindow;
-            equipmentWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            equipmentWindow.Show();
+            EquipmentListWindow equipmentListWindow = new EquipmentListWindow();
+            equipmentListWindow.Owner = Application.Current.MainWindow;
+            equipmentListWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            equipmentListWindow.Show();
         });
 
         private string selectedEquipmentId;

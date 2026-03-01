@@ -10,16 +10,8 @@ namespace ShemaLavanda.Services
 {
     internal class SvgSchemeService
     {
-        //private readonly Dictionary<string, List<GeometryDrawing>> visuals = new();
-        //public IReadOnlyDictionary<string, List<GeometryDrawing>> Visuals => visuals;
-
-        //private readonly Dictionary<GeometryDrawing, string> hitZones = new();
-        //public IReadOnlyDictionary<GeometryDrawing, string> HitZones => hitZones;
-
-        private readonly Dictionary<string, EquipmentItem> items = new();
-        public IReadOnlyDictionary<string, EquipmentItem> Items => items;
-
-        public ObservableCollection<EquipmentItem> Equipment { get; } = new();
+        private readonly Dictionary<string, EquipmentItemVisual> items = new();
+        public IReadOnlyDictionary<string, EquipmentItemVisual> Items => items;
 
         private static readonly Dictionary<string, string> EquipmentType = new()
         {
@@ -48,9 +40,9 @@ namespace ShemaLavanda.Services
 
                     if (bounds.HasValue)
                     {
-                        if (!items.TryGetValue(id, out EquipmentItem item))
+                        if (!items.TryGetValue(id, out EquipmentItemVisual item))
                         {
-                            item = new EquipmentItem();
+                            item = new EquipmentItemVisual();
                             items[id] = item;
                             item.Id = id;
                             item.Type = EquipmentType.TryGetValue(id.Split('_')[0] as string, out string type) ? type : "Неизвестно";
@@ -64,11 +56,13 @@ namespace ShemaLavanda.Services
 
             ParseVisual(drawing);
 
+            #if DEBUG
             foreach (var kvp in items)
             {
                 Debug.WriteLine($"Key: {kvp.Key}");
                 Debug.WriteLine($"Value: {kvp.Value}\n____________");
             }
+            #endif
         }
 
         private Rect? GetElementBounds(XElement element)
@@ -119,14 +113,13 @@ namespace ShemaLavanda.Services
                    id.StartsWith("TWV_");   //двухходовой клапан
         }
 
-        
-
-        private void ParseVisual(Drawing drawing, string currentId = null, bool insideEq = false)
+        private void ParseVisual(Drawing drawing, string currentId = null, bool insideEq = false, bool insideNotPaint = false)
         {
             if (drawing is DrawingGroup group)
             {
                 string id = group.GetValue(SvgObject.IdProperty) as string;
 
+                //MessageBox.Show($"id {id}", "Debug Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 // 1️⃣ Корень оборудования
                 if (!string.IsNullOrEmpty(id) && IsEquipmentType(id) && !id.EndsWith("_hit") && !id.StartsWith("text"))
                     currentId = id;
@@ -134,14 +127,22 @@ namespace ShemaLavanda.Services
                 if (!string.IsNullOrEmpty(id) && id.StartsWith("eq_"))
                     insideEq = true;
 
+                // 3️⃣ Вошли в not_paint
+                if (!string.IsNullOrEmpty(id) && id.EndsWith("not_paint"))
+                    insideNotPaint = true;
+
+                //MessageBox.Show($"Id: {id}\nInsideEq: {insideEq}\nInsideNotPaint: {insideNotPaint}", "Debug Info", MessageBoxButton.OK, MessageBoxImage.Information);
+
                 foreach (Drawing child in group.Children)
-                    ParseVisual(child, currentId, insideEq);
-            }
-            else if (drawing is GeometryDrawing geo && currentId != null && insideEq)
-            {
-                if (!Items.TryGetValue(currentId, out var equipmentItem))
                 {
-                    equipmentItem = new EquipmentItem();
+                    ParseVisual(child, currentId, insideEq, insideNotPaint);
+                }
+            }
+            else if (drawing is GeometryDrawing geo && currentId != null && insideEq && !insideNotPaint)
+            {
+                if (!Items.TryGetValue(currentId, out EquipmentItemVisual equipmentItem))
+                {
+                    equipmentItem = new EquipmentItemVisual();
                     items[currentId] = equipmentItem;
                 }
 

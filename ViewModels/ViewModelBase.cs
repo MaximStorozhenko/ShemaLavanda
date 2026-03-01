@@ -10,7 +10,7 @@ using System.Windows.Navigation;
 
 namespace ShemaLavanda.ViewModels
 {
-    internal class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 

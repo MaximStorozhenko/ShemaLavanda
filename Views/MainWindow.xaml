@@ -11,35 +11,32 @@
     <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+        <Grid Panel.ZIndex="5" VerticalAlignment="Top" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button Content="Оборудование" Grid.Column="0" Width="100" Height="30" Margin="10 0" Command="{Binding OpenEquipmentListWindowCommand}"/>
-            <Button Content="Выход" Grid.Column="2" Width="100" Height="30" Margin="10 0" Command="{Binding ExitProgramCommand}"/>
-        </Grid>
-        
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="DarkGray" Margin="0 2" VerticalAlignment="Top">
-            <Border BorderThickness="2" BorderBrush="DimGray">
-                <TextBlock x:Name="DateBox" VerticalAlignment="Center" Margin="5"
-                           FontSize="12" FontWeight="Bold" Foreground="Black" Text="{Binding Date}" d:Text="01.01.2025 00:00"/>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0 5">
+            <Button Content="Оборудование" FontSize="14" FontWeight="Bold" Margin="10 2" Width="120" Height="25" Command="{Binding OpenEquipmentListWindowCommand}"/>
+            
+            <Border BorderThickness="2" BorderBrush="DimGray" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="DateBox" VerticalAlignment="Center" Margin="4"
+                           FontSize="14" FontWeight="Bold" Foreground="Black" Text="{Binding Date}" d:Text="01.01.2025 00:00"/>
             </Border>
-        </StackPanel>
-        
-        <svg:SvgViewbox x:Name="svgCanvas" Stretch="Uniform" Grid.Row="1"
+
+                <Button Content="Выход" FontSize="14" FontWeight="Bold" Margin="10 2"  Width="120" Height="25" Command="{Binding ExitProgramCommand}" Foreground="Red"/>
+            </StackPanel>
+        </Grid>
+
+        <svg:SvgViewbox x:Name="svgCanvas" Stretch="Uniform"
                         Source="Assets/My_shema.svg"
                         Loaded="svgCanvas_Loaded"
-                        MouseDown="svgCanvas_MouseLeftButtonDown"/>
-        <!--<svg:SvgCanvas x:Name="svgCanvas" 
-                       Source="Assets/My_shema.svg"
-                       Loaded="svgCanvas_Loaded"
-                       MouseLeftButtonDown="svgCanvas_MouseLeftButtonDown"/>-->
+                        MouseDown="svgCanvas_MouseLeftButtonDown"
+                        MouseMove="svgCanvas_MouseMove"/>
     </Grid>
 </Window>
